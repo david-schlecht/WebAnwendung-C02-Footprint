@@ -1,0 +1,123 @@
+<!-- index.html (einzeln, mit integriertem JS) -->
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CO₂ Emissionen weltweit</title>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <!-- Navigation -->
+  <header class="bg-white shadow p-4">
+    <nav class="max-w-screen-lg mx-auto flex justify-between">
+      <h1 class="text-xl font-bold">CO₂ Emissionen</h1>
+      <ul class="hidden md:flex space-x-4">
+        <li><a href="#daten" class="hover:underline">Emissionen</a></li>
+        <li><a href="#kontakt" class="hover:underline">Kontakt</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hauptinhalt -->
+  <main class="max-w-screen-lg mx-auto p-4">
+    <section class="mb-6">
+      <h2 class="text-2xl font-semibold mb-2">Globale CO₂-Emissionsdaten</h2>
+      <p>Hier findest du eine sortier- und filterbare Übersicht relevanter CO₂-Emissionen weltweit.</p>
+    </section>
+
+    <!-- Suchfeld -->
+    <div class="mb-4">
+      <input id="searchInput" type="text" placeholder="Land oder Unternehmen suchen..." class="w-full p-2 border rounded" />
+    </div>
+
+    <!-- Tabelle -->
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white rounded shadow">
+        <thead class="bg-gray-200">
+          <tr>
+            <th class="p-2 cursor-pointer" onclick="sortTable('country')">Land</th>
+            <th class="p-2 cursor-pointer" onclick="sortTable('company')">Unternehmen</th>
+            <th class="p-2 cursor-pointer" onclick="sortTable('co2')">CO₂ (in Mt)</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer class="bg-white mt-12 p-4 text-center text-sm text-gray-500">
+    &copy; 2025 CO₂ Webanwendung – Ein Projekt der IU Internationale Hochschule
+  </footer>
+
+  <script>
+    // Datenarray mit 20 CO2-Einträgen
+    const emissions = [
+      { country: "Deutschland", company: "Volkswagen AG", co2: 109.3 },
+      { country: "USA", company: "ExxonMobil", co2: 512.5 },
+      { country: "China", company: "China Energy", co2: 823.1 },
+      { country: "Indien", company: "Coal India", co2: 476.8 },
+      { country: "Russland", company: "Gazprom", co2: 340.2 },
+      { country: "Japan", company: "Toyota Motor", co2: 98.7 },
+      { country: "Kanada", company: "Suncor Energy", co2: 210.4 },
+      { country: "Brasilien", company: "Petrobras", co2: 165.6 },
+      { country: "Frankreich", company: "TotalEnergies", co2: 187.9 },
+      { country: "Südkorea", company: "Korea Electric Power", co2: 198.4 },
+      { country: "Australien", company: "BHP Group", co2: 132.2 },
+      { country: "Vereinigtes Königreich", company: "BP", co2: 144.5 },
+      { country: "Mexiko", company: "Pemex", co2: 120.3 },
+      { country: "Italien", company: "Eni S.p.A.", co2: 89.7 },
+      { country: "Spanien", company: "Repsol", co2: 72.6 },
+      { country: "Türkei", company: "TUPRAS", co2: 55.2 },
+      { country: "Iran", company: "NIOC", co2: 400.1 },
+      { country: "Südafrika", company: "Sasol", co2: 93.0 },
+      { country: "Indonesien", company: "Pertamina", co2: 145.9 },
+      { country: "Saudi-Arabien", company: "Saudi Aramco", co2: 600.4 }
+    ];
+
+    let sortDirection = true;
+
+    function renderTable(data) {
+      const tbody = document.getElementById("tableBody");
+      tbody.innerHTML = "";
+
+      data.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td class="border px-4 py-2">${item.country}</td>
+          <td class="border px-4 py-2">${item.company}</td>
+          <td class="border px-4 py-2">${item.co2.toFixed(1)}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function filterTable(query) {
+      const filtered = emissions.filter(item =>
+        item.country.toLowerCase().includes(query.toLowerCase()) ||
+        item.company.toLowerCase().includes(query.toLowerCase())
+      );
+      renderTable(filtered);
+    }
+
+    function sortTable(key) {
+      const sorted = [...emissions].sort((a, b) => {
+        if (typeof a[key] === "string") {
+          return sortDirection
+            ? a[key].localeCompare(b[key])
+            : b[key].localeCompare(a[key]);
+        } else {
+          return sortDirection ? a[key] - b[key] : b[key] - a[key];
+        }
+      });
+      sortDirection = !sortDirection;
+      renderTable(sorted);
+    }
+
+    // Initialisierung
+    renderTable(emissions);
+    document.getElementById("searchInput").addEventListener("input", e => filterTable(e.target.value));
+  </script>
+</body>
+</html>
