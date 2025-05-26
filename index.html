@@ -52,11 +52,11 @@
   <footer class="bg-white mt-12 p-4 text-center text-sm text-gray-500">
     &copy; 2025 CO2 Webanwendung – Ein Projekt der IU Internationale Hochschule - David Schlecht
     <li><a href="#impressum" class="hover:underline">Impressum</a></li>
+	<li><a href="#datenschutz" class="hover:underline">Datenschutz</a></li>
   </footer>
 
 <!-- JavaScript Anwendung -->
   <script>
-    // Datenarray mit 20 CO2-Einträgen
     const emissions = [
       { country: "Deutschland", company: "Volkswagen AG", co2: 109.3 },
       { country: "USA", company: "ExxonMobil", co2: 512.5 },
@@ -97,10 +97,15 @@
       });
     }
 
+    function sanitizeInput(input) {
+      return input.replace(/[^a-zA-Z0-9äöüÄÖÜß\s\-\.]/g, "");
+    }
+
     function filterTable(query) {
+      const safeQuery = sanitizeInput(query);
       const filtered = emissions.filter(item =>
-        item.country.toLowerCase().includes(query.toLowerCase()) ||
-        item.company.toLowerCase().includes(query.toLowerCase())
+        item.country.toLowerCase().includes(safeQuery.toLowerCase()) ||
+        item.company.toLowerCase().includes(safeQuery.toLowerCase())
       );
       renderTable(filtered);
     }
@@ -119,7 +124,6 @@
       renderTable(sorted);
     }
 
-    // Initialisierung
     renderTable(emissions);
     document.getElementById("searchInput").addEventListener("input", e => filterTable(e.target.value));
   </script>
